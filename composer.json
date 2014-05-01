@@ -1,0 +1,54 @@
+{
+    "name": "philiprehberger/laravel-response-macros",
+    "description": "A collection of response macros for consistent, standardized API responses in Laravel.",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "response",
+        "macros",
+        "api",
+        "json"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philip Rehberger",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
+        "illuminate/contracts": "^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^11.0",
+        "laravel/pint": "^1.0",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhilipRehberger\\ResponseMacros\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhilipRehberger\\ResponseMacros\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PhilipRehberger\\ResponseMacros\\ResponseMacroServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
