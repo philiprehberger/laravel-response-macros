@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-12
+
+### Added
+- Optional `$message` parameter on `validationError()` macro for custom validation messages
+- Status code range validation on `success()` (must be 2xx) and `error()` (must be 4xx/5xx)
+
+### Removed
+- `noContent()` macro — it was dead code shadowed by Laravel's native `ResponseFactory::noContent()` method; use Laravel's built-in `response()->noContent()` instead
+
+### Fixed
+- README incorrectly documented `noContent()` return type as `JsonResponse` (it was actually `Response`)
+
 ## [1.0.0] - 2026-03-09
 
 ### Added
@@ -22,5 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full PHPUnit test suite using Orchestra Testbench.
 - GitHub Actions CI matrix for PHP 8.2, 8.3, and 8.4 against Laravel 11 and 12.
 
-[Unreleased]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/philiprehberger/laravel-response-macros/releases/tag/v1.0.0

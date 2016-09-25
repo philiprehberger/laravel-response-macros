@@ -59,6 +59,8 @@ Returns a `200 OK` response (or any 2xx) indicating a successful operation.
 response()->success(mixed $data = null, string $message = 'Success', int $status = 200): JsonResponse
 ```
 
+> **Note:** The `$status` parameter must be a 2xx status code (200–299). Passing a non-2xx status throws `InvalidArgumentException`.
+
 **Example**
 
 ```php
@@ -87,6 +89,8 @@ Returns a `400 Bad Request` response (or any 4xx/5xx) indicating a failed operat
 ```php
 response()->error(string $message = 'Error', int $status = 400, mixed $errors = null): JsonResponse
 ```
+
+> **Note:** The `$status` parameter must be a 4xx or 5xx status code (400–599). Passing a non-error status throws `InvalidArgumentException`.
 
 **Example**
 
@@ -166,7 +170,7 @@ Returns a `422 Unprocessable Entity` response from a `Validator` instance or a `
 **Signature**
 
 ```php
-response()->validationError(Validator|MessageBag $validator): JsonResponse
+response()->validationError(Validator|MessageBag $validator, string $message = 'The given data was invalid.'): JsonResponse
 ```
 
 **Example with a Validator**
@@ -206,27 +210,17 @@ return response()->validationError($messages);
 }
 ```
 
+You can customize the error message:
+
+```php
+return response()->validationError($validator, 'Please fix the highlighted fields.');
+```
+
 ---
 
 ### `response()->noContent()`
 
-Returns a `204 No Content` response with an empty body.
-
-**Signature**
-
-```php
-response()->noContent(): JsonResponse
-```
-
-**Example**
-
-```php
-$user->delete();
-
-return response()->noContent();
-```
-
-**Response**: HTTP `204` with no body.
+> **Removed in v1.1.0.** The `noContent()` macro was dead code — Laravel's `ResponseFactory` defines `noContent()` natively, and native methods take precedence over macros. Use Laravel's built-in `response()->noContent()` instead, which returns an HTTP `204` with an empty body.
 
 ---
 

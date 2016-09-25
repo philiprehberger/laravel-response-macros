@@ -6,6 +6,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator as ConcretePaginator;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use Orchestra\Testbench\TestCase;
 use PhilipRehberger\ResponseMacros\ResponseMacroServiceProvider;
 
@@ -244,26 +245,96 @@ class ResponseMacroTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // noContent()
+    // validationError() — custom message
     // -------------------------------------------------------------------------
 
-    public function test_no_content_returns_204(): void
+    public function test_validation_error_accepts_custom_message(): void
     {
-        // Laravel's ResponseFactory defines noContent() natively; the macro
-        // registration is superseded by the framework method, which returns a
-        // plain Response (not JsonResponse) with an empty body — the correct
-        // HTTP 204 behaviour.
-        $response = response()->noContent();
+        $validator = Validator::make([], ['name' => 'required']);
+        $response  = response()->validationError($validator, 'Custom validation message');
+        $data      = $response->getData(true);
 
-        $this->assertInstanceOf(\Illuminate\Http\Response::class, $response);
-        $this->assertSame(204, $response->getStatusCode());
+        $this->assertSame('Custom validation message', $data['message']);
     }
 
-    public function test_no_content_body_is_empty(): void
+    public function test_validation_error_omits_status_code_when_disabled(): void
     {
-        $response = response()->noContent();
+        config(['response-macros.include_status_code' => false]);
 
-        $this->assertSame('', $response->getContent());
+        $validator = Validator::make([], ['name' => 'required']);
+        $response  = response()->validationError($validator);
+        $data      = $response->getData(true);
+
+        $this->assertArrayNotHasKey('status', $data);
+
+        config(['response-macros.include_status_code' => true]);
+    }
+
+    // -------------------------------------------------------------------------
+    // success() — status code validation
+    // -------------------------------------------------------------------------
+
+    public function test_success_throws_for_non_2xx_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('2xx');
+
+        response()->success(null, 'Error', 400);
+    }
+
+    public function test_success_throws_for_1xx_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        response()->success(null, 'Continue', 100);
+    }
+
+    public function test_success_throws_for_3xx_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        response()->success(null, 'Redirect', 301);
+    }
+
+    // -------------------------------------------------------------------------
+    // error() — status code validation
+    // -------------------------------------------------------------------------
+
+    public function test_error_throws_for_non_error_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('4xx or 5xx');
+
+        response()->error('Not an error', 200);
+    }
+
+    public function test_error_throws_for_3xx_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        response()->error('Not an error', 301);
+    }
+
+    public function test_error_accepts_5xx_status(): void
+    {
+        $response = response()->error('Server error', 500);
+
+        $this->assertSame(500, $response->getStatusCode());
+    }
+
+    // -------------------------------------------------------------------------
+    // paginated() — empty paginator
+    // -------------------------------------------------------------------------
+
+    public function test_paginated_handles_empty_paginator(): void
+    {
+        $paginator = new ConcretePaginator([], 0, 10, 1);
+        $response  = response()->paginated($paginator);
+        $data      = $response->getData(true);
+
+        $this->assertTrue($data['success']);
+        $this->assertSame([], $data['data']);
+        $this->assertSame(0, $data['meta']['total']);
     }
 
     // -------------------------------------------------------------------------

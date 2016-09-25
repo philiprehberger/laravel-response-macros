@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 
 class ResponseMacroServiceProvider extends ServiceProvider
 {
@@ -29,7 +30,6 @@ class ResponseMacroServiceProvider extends ServiceProvider
         $this->registerErrorMacro();
         $this->registerPaginatedMacro();
         $this->registerValidationErrorMacro();
-        $this->registerNoContentMacro();
         $this->registerAcceptedMacro();
         $this->registerEnvelopeMacro();
     }
@@ -40,6 +40,12 @@ class ResponseMacroServiceProvider extends ServiceProvider
             'success',
             function (mixed $data = null, string $message = 'Success', int $status = 200): JsonResponse {
                 /** @var ResponseFactory $this */
+                if ($status < 200 || $status > 299) {
+                    throw new InvalidArgumentException(
+                        "The success macro requires a 2xx status code, {$status} given.",
+                    );
+                }
+
                 $payload = [
                     'success' => true,
                     'message' => $message,
@@ -61,6 +67,12 @@ class ResponseMacroServiceProvider extends ServiceProvider
             'error',
             function (string $message = 'Error', int $status = 400, mixed $errors = null): JsonResponse {
                 /** @var ResponseFactory $this */
+                if ($status < 400 || $status > 599) {
+                    throw new InvalidArgumentException(
+                        "The error macro requires a 4xx or 5xx status code, {$status} given.",
+                    );
+                }
+
                 $payload = [
                     'success' => false,
                     'message' => $message,
@@ -107,7 +119,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
     {
         ResponseFactory::macro(
             'validationError',
-            function (Validator|MessageBag $validator): JsonResponse {
+            function (Validator|MessageBag $validator, string $message = 'The given data was invalid.'): JsonResponse {
                 /** @var ResponseFactory $this */
                 $errors = $validator instanceof Validator
                     ? $validator->errors()->toArray()
@@ -115,7 +127,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
 
                 $payload = [
                     'success' => false,
-                    'message' => 'The given data was invalid.',
+                    'message' => $message,
                     'errors'  => $errors,
                 ];
 
@@ -124,23 +136,6 @@ class ResponseMacroServiceProvider extends ServiceProvider
                 }
 
                 return response()->json($payload, 422);
-            },
-        );
-    }
-
-    protected function registerNoContentMacro(): void
-    {
-        // Note: Laravel's ResponseFactory already defines noContent() natively.
-        // Registering this macro is a no-op in practice because native methods
-        // take precedence over macros. The macro is declared here for
-        // documentation and IDE support completeness, but callers should use
-        // the built-in response()->noContent() which returns an HTTP 204
-        // response with an empty body — exactly the same behaviour.
-        ResponseFactory::macro(
-            'noContent',
-            function (): \Illuminate\Http\Response {
-                /** @var ResponseFactory $this */
-                return response()->make('', 204);
             },
         );
     }
