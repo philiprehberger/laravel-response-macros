@@ -1,9 +1,8 @@
 # Laravel Response Macros
 
 [![Tests](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml)
-[![Latest Stable Version](https://poser.pugx.org/philiprehberger/laravel-response-macros/v/stable)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
-[![Total Downloads](https://poser.pugx.org/philiprehberger/laravel-response-macros/downloads)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
-[![License](https://poser.pugx.org/philiprehberger/laravel-response-macros/license)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-response-macros.svg)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
+[![License](https://img.shields.io/github/license/philiprehberger/laravel-response-macros)](LICENSE)
 
 A collection of response macros for consistent, standardized API responses in Laravel.
 
@@ -328,6 +327,17 @@ After:
 
 The HTTP status code on the response itself is never affected by this option.
 
+## API
+
+| Macro | Signature | Description |
+|-------|-----------|-------------|
+| `response()->success()` | `success(mixed $data, string $message, int $status): JsonResponse` | 2xx success response |
+| `response()->error()` | `error(string $message, int $status, mixed $errors): JsonResponse` | 4xx/5xx error response |
+| `response()->paginated()` | `paginated(LengthAwarePaginator $paginator, string $message): JsonResponse` | Paginated response with metadata |
+| `response()->validationError()` | `validationError(Validator\|MessageBag $validator, string $message): JsonResponse` | 422 validation error |
+| `response()->accepted()` | `accepted(mixed $data, string $message): JsonResponse` | 202 async accepted response |
+| `response()->envelope()` | `envelope(mixed $data, array $meta): JsonResponse` | Data under configurable key |
+
 ## Development
 
 ```bash
@@ -339,4 +349,4 @@ vendor/bin/phpstan analyse
 
 ## License
 
-The MIT License (MIT). See the [LICENSE](LICENSE) file for details.
+MIT
