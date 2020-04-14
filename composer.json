@@ -1,6 +1,6 @@
 {
     "name": "philiprehberger/laravel-response-macros",
-    "description": "A collection of response macros for consistent, standardized API responses in Laravel.",
+    "description": "Response macros for consistent, standardized API responses in Laravel",
     "type": "library",
     "keywords": [
         "laravel",
