@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-response-macros.svg)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
 [![License](https://img.shields.io/github/license/philiprehberger/laravel-response-macros)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Response macros for consistent, standardized API responses in Laravel.
 
