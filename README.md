@@ -2,8 +2,7 @@
 
 [![Tests](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml/badge.svg)](https://github.com/philiprehberger/laravel-response-macros/actions/workflows/tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/philiprehberger/laravel-response-macros.svg)](https://packagist.org/packages/philiprehberger/laravel-response-macros)
-[![License](https://img.shields.io/github/license/philiprehberger/laravel-response-macros)](LICENSE)
-[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
+[![Last updated](https://img.shields.io/github/last-commit/philiprehberger/laravel-response-macros)](https://github.com/philiprehberger/laravel-response-macros/commits/main)
 
 Response macros for consistent, standardized API responses in Laravel.
 
@@ -76,7 +75,6 @@ return response()->success($user, 'User retrieved successfully');
 }
 ```
 
-
 ### `response()->error()`
 
 Returns a `400 Bad Request` response (or any 4xx/5xx) indicating a failed operation.
@@ -121,7 +119,6 @@ return response()->error('Payment failed', 402, ['code' => 'card_declined']);
 }
 ```
 
-
 ### `response()->paginated()`
 
 Wraps a `LengthAwarePaginator` with standardized pagination metadata.
@@ -156,7 +153,6 @@ return response()->paginated($users, 'Users retrieved');
     "status": 200
 }
 ```
-
 
 ### `response()->validationError()`
 
@@ -211,11 +207,9 @@ You can customize the error message:
 return response()->validationError($validator, 'Please fix the highlighted fields.');
 ```
 
-
 ### `response()->noContent()`
 
 > **Removed in v1.1.0.** The `noContent()` macro was dead code — Laravel's `ResponseFactory` defines `noContent()` natively, and native methods take precedence over macros. Use Laravel's built-in `response()->noContent()` instead, which returns an HTTP `204` with an empty body.
-
 
 ### `response()->accepted()`
 
@@ -245,7 +239,6 @@ return response()->accepted(['job_id' => $job->id], 'Report generation queued');
     "status": 202
 }
 ```
-
 
 ### `response()->envelope()`
 
@@ -296,7 +289,6 @@ return response()->envelope($results, [
 }
 ```
 
-
 ### Omitting the Status Code from the Body
 
 Set `include_status_code` to `false` in `config/response-macros.php` to remove the `"status"` key from all response bodies:
@@ -339,6 +331,24 @@ vendor/bin/pint --test
 vendor/bin/phpstan analyse
 ```
 
+## Support
+
+If you find this project useful:
+
+⭐ [Star the repo](https://github.com/philiprehberger/laravel-response-macros)
+
+🐛 [Report issues](https://github.com/philiprehberger/laravel-response-macros/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/laravel-response-macros/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
+
 ## License
 
-MIT
+[MIT](LICENSE)
