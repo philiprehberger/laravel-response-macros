@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhilipRehberger\ResponseMacros;
 
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +35,9 @@ class ResponseMacroServiceProvider extends ServiceProvider
         $this->registerValidationErrorMacro();
         $this->registerAcceptedMacro();
         $this->registerEnvelopeMacro();
+        $this->registerCursorPaginatedMacro();
+        $this->registerWithRateLimitMacro();
+        $this->registerCachedMacro();
     }
 
     protected function registerSuccessMacro(): void
@@ -183,6 +189,74 @@ class ResponseMacroServiceProvider extends ServiceProvider
                 }
 
                 return response()->json($payload, 200);
+            },
+        );
+    }
+
+    protected function registerCursorPaginatedMacro(): void
+    {
+        ResponseFactory::macro(
+            'cursorPaginated',
+            function (CursorPaginator $paginator, string $wrap = 'data', int $status = 200): JsonResponse {
+                /** @var ResponseFactory $this */
+                return response()->json([
+                    $wrap  => $paginator->items(),
+                    'meta' => [
+                        'next_cursor' => $paginator->nextCursor()?->encode(),
+                        'prev_cursor' => $paginator->previousCursor()?->encode(),
+                        'has_more'    => $paginator->hasMorePages(),
+                        'per_page'    => $paginator->perPage(),
+                    ],
+                ], $status);
+            },
+        );
+    }
+
+    protected function registerWithRateLimitMacro(): void
+    {
+        ResponseFactory::macro(
+            'withRateLimit',
+            function (int $limit, int $remaining, ?int $retryAfter = null): JsonResponse {
+                $response = response()->json([]);
+
+                $response->headers->set('X-RateLimit-Limit', (string) $limit);
+                $response->headers->set('X-RateLimit-Remaining', (string) max(0, $remaining));
+
+                if ($retryAfter !== null) {
+                    $response->headers->set('Retry-After', (string) $retryAfter);
+                    $response->headers->set('X-RateLimit-Reset', (string) (time() + $retryAfter));
+                }
+
+                return $response;
+            },
+        );
+    }
+
+    protected function registerCachedMacro(): void
+    {
+        ResponseFactory::macro(
+            'cached',
+            function (mixed $data, int $ttl = 3600, ?string $etag = null): JsonResponse {
+                /** @var ResponseFactory $this */
+                if ($etag !== null) {
+                    $request = request();
+
+                    if ($request->headers->get('If-None-Match') === '"' . $etag . '"') {
+                        return new JsonResponse(null, 304, [
+                            'Cache-Control' => "public, max-age={$ttl}",
+                            'ETag'          => '"' . $etag . '"',
+                        ]);
+                    }
+                }
+
+                $response = response()->json($data);
+                $response->headers->set('Cache-Control', "public, max-age={$ttl}");
+
+                if ($etag !== null) {
+                    $response->headers->set('ETag', '"' . $etag . '"');
+                }
+
+                return $response;
             },
         );
     }

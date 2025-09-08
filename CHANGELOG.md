@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-31
+
+### Added
+- Cursor pagination macro via `response()->cursorPaginated()` with next/prev cursors and has_more
+- Rate limit headers macro via `response()->withRateLimit()` for X-RateLimit-* headers
+- Cached response macro via `response()->cached()` with Cache-Control, ETag, and 304 support
+
 ## [1.1.7] - 2026-03-31
 
 ### Changed
@@ -67,6 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full PHPUnit test suite using Orchestra Testbench.
 - GitHub Actions CI matrix for PHP 8.2, 8.3, and 8.4 against Laravel 11 and 12.
 
-[Unreleased]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.1.7...v1.2.0
+[1.1.7]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.1.0...v1.1.7
 [1.1.0]: https://github.com/philiprehberger/laravel-response-macros/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/philiprehberger/laravel-response-macros/releases/tag/v1.0.0
