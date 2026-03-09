@@ -1,22 +1,8 @@
-includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-phpunit/rules.neon
-
 parameters:
     level: 8
 
     paths:
         - src
-        - tests
 
     excludePaths:
         - vendor
-
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-
-    ignoreErrors:
-        # ResponseFactory macros are registered at runtime; PHPStan cannot resolve
-        # the macro calls on the $this variable inside closures bound to ResponseFactory.
-        - '#Call to an undefined method Illuminate\\Routing\\ResponseFactory::#'
-        - '#Variable \$this might not be defined#'
