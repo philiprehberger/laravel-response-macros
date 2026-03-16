@@ -328,11 +328,13 @@ After:
 
 The HTTP status code on the response itself is never affected by this option.
 
-## Testing
+## Development
 
 ```bash
 composer install
 vendor/bin/phpunit
+vendor/bin/pint --test
+vendor/bin/phpstan analyse
 ```
 
 ## License
