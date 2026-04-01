@@ -240,6 +240,112 @@ return response()->accepted(['job_id' => $job->id], 'Report generation queued');
 }
 ```
 
+### Cursor Pagination
+
+Wraps a `CursorPaginator` with cursor-based pagination metadata. Ideal for infinite-scroll UIs and large datasets where offset pagination is impractical.
+
+**Signature**
+
+```php
+response()->cursorPaginated(CursorPaginator $paginator, string $wrap = 'data', int $status = 200): JsonResponse
+```
+
+**Example**
+
+```php
+$users = User::cursorPaginate(15);
+
+return response()->cursorPaginated($users);
+```
+
+**Response**
+
+```json
+{
+    "data": [ ... ],
+    "meta": {
+        "next_cursor": "eyJpZCI6MTUsIl9wb2ludHNUb05leHRJdGVtcyI6dHJ1ZX0",
+        "prev_cursor": null,
+        "has_more": true,
+        "per_page": 15
+    }
+}
+```
+
+You can customize the wrap key:
+
+```php
+return response()->cursorPaginated($users, 'results');
+```
+
+### Rate Limit Headers
+
+Adds standard rate-limiting headers to a response. Chain it after building a JSON response or call it directly from the response factory.
+
+**Signature**
+
+```php
+response()->withRateLimit(int $limit, int $remaining, ?int $retryAfter = null): JsonResponse
+```
+
+**Example**
+
+```php
+return response()->withRateLimit(100, 97);
+```
+
+**Headers**
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 97
+```
+
+When the client should back off:
+
+```php
+return response()->withRateLimit(100, 0, 60);
+```
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+Retry-After: 60
+X-RateLimit-Reset: 1711929600
+```
+
+### Cached Responses
+
+Returns a JSON response with `Cache-Control` headers and optional `ETag` support including automatic `304 Not Modified` handling.
+
+**Signature**
+
+```php
+response()->cached(mixed $data, int $ttl = 3600, ?string $etag = null): JsonResponse
+```
+
+**Example without ETag**
+
+```php
+return response()->cached($config, 1800);
+```
+
+**Headers**
+
+```
+Cache-Control: public, max-age=1800
+```
+
+**Example with ETag**
+
+```php
+$etag = md5(json_encode($data));
+
+return response()->cached($data, 3600, $etag);
+```
+
+When the client sends `If-None-Match` matching the ETag, a `304 Not Modified` response is returned automatically with no body.
+
 ### `response()->envelope()`
 
 Wraps arbitrary data under a configurable key with optional metadata. Useful when you need full control over the response shape without the opinionated `success`/`message` fields.
@@ -321,6 +427,9 @@ The HTTP status code on the response itself is never affected by this option.
 | `response()->validationError()` | `validationError(Validator\|MessageBag $validator, string $message): JsonResponse` | 422 validation error |
 | `response()->accepted()` | `accepted(mixed $data, string $message): JsonResponse` | 202 async accepted response |
 | `response()->envelope()` | `envelope(mixed $data, array $meta): JsonResponse` | Data under configurable key |
+| `response()->cursorPaginated()` | `cursorPaginated(CursorPaginator $paginator, string $wrap, int $status): JsonResponse` | Cursor-paginated response with metadata |
+| `response()->withRateLimit()` | `withRateLimit(int $limit, int $remaining, ?int $retryAfter): JsonResponse` | Adds X-RateLimit-* headers |
+| `response()->cached()` | `cached(mixed $data, int $ttl, ?string $etag): JsonResponse` | Cached response with ETag and 304 support |
 
 ## Development
 
